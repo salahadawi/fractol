@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/25 19:58:29 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/25 20:40:13 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,44 @@ int		mouse_press(int key, int x, int y, void *param)
 	return (0);
 }
 
+int		mouse_release(int key, int x, int y, void *param)
+{
+	t_mlx *mlx;
+
+	(void)x;
+	(void)y;
+	mlx = param;
+	if (key == 1)
+		mlx->mouse1 = 0;
+	if (key == 2)
+		mlx->mouse2 = 0;
+	handle_drawing(mlx);
+	return (0);
+}
+
+void	handle_mouse1_move(int x, int y, t_mlx *mlx)
+{
+	if (x != mlx->mousex)
+		mlx->offsetx -= x - mlx->mousex;
+	if (y != mlx->mousey)
+		mlx->offsety -= y - mlx->mousey;
+}
+
+int		mouse_move(int x, int y, void *param)
+{
+	t_mlx *mlx;
+
+	mlx = param;
+	if (mlx->mouse1)
+		handle_mouse1_move(x, y, mlx);
+	// if (mlx->mouse2)
+	// 	handle_mouse2_move(x, y, mlx);
+	mlx->mousex = x;
+	mlx->mousey = y;
+	handle_drawing(mlx);
+	return (0);
+}
+
 void	draw_pixel(int x, int y, int color, t_mlx *mlx)
 {
 	int r;
@@ -64,7 +102,7 @@ void	draw_pixel(int x, int y, int color, t_mlx *mlx)
 	mlx->image[x * 4 + y * mlx->size_line + 2] = b;
 }
 
-double	scale(int oldmin, int oldmax, double newmin, double newmax)
+double	scale(double oldmin, double oldmax, double newmin, double newmax)
 {
 	double slope;
 
@@ -109,10 +147,10 @@ int	mandelbrot(int x, int y, t_mlx *mlx, double slope[2])
 	int *i;
 	double xtmp;
 
-	// x += mlx->zoom * 100;
-	// y += mlx->zoom * 100;
-	xy_scaled[0] = -2 * mlx->zoom + slope[0] * (x - 0);
-	xy_scaled[1] = -1 * mlx->zoom + slope[1] * (y - 0);
+	x += mlx->offsetx;
+	y += mlx->offsety;
+	xy_scaled[0] = -2 + slope[0] * x;
+	xy_scaled[1] = -1 + slope[1] * y;
 	xy = (double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
 	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
@@ -125,7 +163,7 @@ int	mandelbrot(int x, int y, t_mlx *mlx, double slope[2])
 	if (i[0] == mlx->iter)
 		return (0);
 	else
-		return (0x00F0F * i[0]);
+		return (0x00B0B * i[0]);
 }
 
 void	*draw_fractal(void *param)
@@ -183,6 +221,7 @@ void	handle_drawing(t_mlx *mlx)
 	i = 0;
 	while (i < THREADS)
 	 	pthread_join(thread_id[i++], NULL);
+
 	mlx_put_image_to_window(mlx->init, mlx->window, mlx->image_ptr, 0, 0);
 }
 
@@ -191,7 +230,9 @@ void	initialize_mlx(t_mlx *mlx)
 	mlx->mouse1 = 0;
 	mlx->mouse2 = 0;
 	mlx->zoom = 1;
-	mlx->iter = 50;
+	mlx->iter = 10;
+	mlx->offsetx = 0;
+	mlx->offsety = 0;
 }
 
 void	handle_graphics(char *name)
@@ -208,8 +249,8 @@ void	handle_graphics(char *name)
 	initialize_mlx(mlx);
 	mlx_hook(mlx->window, 2, 0, check_key, (void*)mlx);
 	mlx_hook(mlx->window, 4, 0, mouse_press, (void*)mlx);
-	//mlx_hook(mlx->window, 5, 0, mouse_release, (void*)mlx);
-	//mlx_hook(mlx->window, 6, 0, mouse_move, (void*)mlx);
+	mlx_hook(mlx->window, 5, 0, mouse_release, (void*)mlx);
+	mlx_hook(mlx->window, 6, 0, mouse_move, (void*)mlx);
 	//mlx_hook(mlx->window, 12, 0, handle_idle, (void*)mlx);
 	//mlx_loop_hook(mlx->init, handle_idle, (void*)mlx);
 	handle_drawing(mlx);
@@ -224,3 +265,6 @@ int		main(int argc, char **argv)
 	handle_graphics(argv[1]);
 	return (0);
 }
+
+//multithreading might work by not letting threads exit
+//zoom always zooms in fractal center

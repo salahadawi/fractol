@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/25 19:12:12 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/25 20:35:00 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ typedef	struct		s_mlx
 	double			zoom;
 	int				iter;
 	int				thread;
+	int				offsetx;
+	int				offsety;
 
 }					t_mlx;
 
