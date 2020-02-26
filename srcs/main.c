@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/25 20:40:13 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/26 14:00:11 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,14 @@ int		mouse_move(int x, int y, void *param)
 
 	mlx = param;
 	if (mlx->mouse1)
+	{
 		handle_mouse1_move(x, y, mlx);
+		handle_drawing(mlx);
+	}
 	// if (mlx->mouse2)
 	// 	handle_mouse2_move(x, y, mlx);
 	mlx->mousex = x;
 	mlx->mousey = y;
-	handle_drawing(mlx);
 	return (0);
 }
 
@@ -149,8 +151,8 @@ int	mandelbrot(int x, int y, t_mlx *mlx, double slope[2])
 
 	x += mlx->offsetx;
 	y += mlx->offsety;
-	xy_scaled[0] = -2 + slope[0] * x;
-	xy_scaled[1] = -1 + slope[1] * y;
+	xy_scaled[0] = -2 * mlx->zoom + slope[0] * x;
+	xy_scaled[1] = -1 * mlx->zoom + slope[1] * y;
 	xy = (double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
 	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
@@ -169,14 +171,11 @@ int	mandelbrot(int x, int y, t_mlx *mlx, double slope[2])
 void	*draw_fractal(void *param)
 {
 	t_mlx *mlx;
-	int i;
 	int color;
 	int xy[2];
 	double slope[2];
 
 	mlx = param;
-	i = mlx->thread;
-	// ft_printf("%d\n", i);
 	xy[1] = 0;
 	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
 	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
@@ -186,20 +185,186 @@ void	*draw_fractal(void *param)
 		while (xy[0] < WIN_WIDTH)
 		{
 			color = mandelbrot(xy[0], xy[1], mlx, slope);
-			// ft_printf("x: %d, y: %d \n",i % WIN_WIDTH, i / WIN_WIDTH);
 			draw_pixel(xy[0], xy[1], color, mlx);
-			i += THREADS;
-			xy[0]++;
+			xy[0] += THREADS;
 		}
 		xy[1]++;
 	}
-	// while (i < WIN_WIDTH * WIN_HEIGHT)
-	// {
-	// 	color = burning_ship(i % WIN_WIDTH, i / WIN_WIDTH, mlx);
-	// 	// ft_printf("x: %d, y: %d \n",i % WIN_WIDTH, i / WIN_WIDTH);
-	// 	draw_pixel(i % WIN_WIDTH, i / WIN_WIDTH, color, mlx);
-	// 	i += THREADS;
-	// }
+	return (NULL);
+}
+
+void	*draw_fractal1(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 1;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal2(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 2;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal3(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 3;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal4(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 4;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal5(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 5;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal6(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 6;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
+	return (NULL);
+}
+
+void	*draw_fractal7(void *param)
+{
+	t_mlx *mlx;
+	int color;
+	int xy[2];
+	double slope[2];
+
+	mlx = param;
+	xy[1] = 0;
+	slope[0] = scale(0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
+	slope[1] = scale(0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+	while (xy[1] < WIN_HEIGHT)
+	{
+		xy[0] = 7;
+		while (xy[0] < WIN_WIDTH)
+		{
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			draw_pixel(xy[0], xy[1], color, mlx);
+			xy[0] += THREADS;
+		}
+		xy[1]++;
+	}
 	return (NULL);
 }
 
@@ -213,20 +378,40 @@ void	handle_drawing(t_mlx *mlx)
 	while (i < THREADS)
 	{
 		mlx->thread = i;
-		ret = pthread_create(&thread_id[i++], NULL, draw_fractal, mlx);
+		if (i == 0)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal, mlx);
+		else if (i == 1)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal1, mlx);
+		else if (i == 2)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal2, mlx);
+		else if (i == 3)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal3, mlx);
+		else if (i == 4)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal4, mlx);
+		else if (i == 5)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal5, mlx);
+		else if (i == 6)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal6, mlx);
+		else if (i == 7)
+			ret = pthread_create(&thread_id[i], NULL, draw_fractal7, mlx);
 		if (ret)
 			ft_printf("Error: Thread %d\n", i);
+			i++;
 	}
 	//draw_fractal(mlx);
 	i = 0;
 	while (i < THREADS)
 	 	pthread_join(thread_id[i++], NULL);
-
 	mlx_put_image_to_window(mlx->init, mlx->window, mlx->image_ptr, 0, 0);
 }
 
-void	initialize_mlx(t_mlx *mlx)
+void	initialize_mlx(t_mlx *mlx, char *name)
 {
+	mlx->init = mlx_init();
+	mlx->window = mlx_new_window(mlx->init, WIN_WIDTH, WIN_HEIGHT, name);
+	mlx->image_ptr = mlx_new_image(mlx->init, WIN_WIDTH, WIN_HEIGHT);
+	mlx->image = mlx_get_data_addr(mlx->image_ptr, &(mlx->bpp),
+	&(mlx->size_line), &(mlx->endian));
 	mlx->mouse1 = 0;
 	mlx->mouse2 = 0;
 	mlx->zoom = 1;
@@ -235,18 +420,8 @@ void	initialize_mlx(t_mlx *mlx)
 	mlx->offsety = 0;
 }
 
-void	handle_graphics(char *name)
+void	handle_graphics(t_mlx *mlx)
 {
-	t_mlx	*mlx;
-
-	if (!(mlx = (t_mlx*)malloc(sizeof(t_mlx))))
-		handle_error(3);
-	mlx->init = mlx_init();
-	mlx->window = mlx_new_window(mlx->init, WIN_WIDTH, WIN_HEIGHT, name);
-	mlx->image_ptr = mlx_new_image(mlx->init, WIN_WIDTH, WIN_HEIGHT);
-	mlx->image = mlx_get_data_addr(mlx->image_ptr, &(mlx->bpp),
-	&(mlx->size_line), &(mlx->endian));
-	initialize_mlx(mlx);
 	mlx_hook(mlx->window, 2, 0, check_key, (void*)mlx);
 	mlx_hook(mlx->window, 4, 0, mouse_press, (void*)mlx);
 	mlx_hook(mlx->window, 5, 0, mouse_release, (void*)mlx);
@@ -259,12 +434,17 @@ void	handle_graphics(char *name)
 
 int		main(int argc, char **argv)
 {
+	t_mlx	*mlx;
 
+	if (!(mlx = (t_mlx*)malloc(sizeof(t_mlx))))
+		handle_error(3);
+	initialize_mlx(mlx, argv[1]);
 	if (argc != 2)
 		handle_error(1);
-	handle_graphics(argv[1]);
+	handle_graphics(mlx);
 	return (0);
 }
 
 //multithreading might work by not letting threads exit
 //zoom always zooms in fractal center
+//how many threads is optimal?
