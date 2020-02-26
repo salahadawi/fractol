@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/26 18:23:27 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/26 19:00:03 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -683,4 +683,5 @@ int		main(int argc, char **argv)
 
 //multithreading might work by not letting threads exit
 //zoom always zooms in fractal center
-//how many threads is optimal?
+//how many threads is optimal? probably 8
+//change mandelbrot algorithm to more efficient one
