@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/26 18:21:59 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/26 18:22:52 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -528,7 +528,7 @@ void	*draw_fractal13(void *param)
 		xy[0] = 13;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1],gt mlx, slope);
+			color = mandelbrot(xy[0], xy[1], mlx, slope);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
