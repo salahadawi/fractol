@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/26 13:52:06 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/26 18:19:31 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 # define WIN_HEIGHT	1000
 # define WIN_WIDTH	1500
-# define THREADS 1
+# define THREADS 16
 
 typedef	struct		s_mlx
 {
@@ -39,11 +39,15 @@ typedef	struct		s_mlx
 	int				mouse2;
 	int				mousex;
 	int				mousey;
-	double			zoom;
+	int				redraw;
 	int				iter;
 	int				thread;
 	int				offsetx;
 	int				offsety;
+	long double		re1;
+	long double		re2;
+	long double		lm1;
+	long double		lm2;
 
 }					t_mlx;
 
