@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/27 17:43:24 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/27 18:40:12 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -360,13 +360,8 @@ void	*draw_fractal(void *param)
 		xy[0] = 0;
 		while (xy[0] < WIN_WIDTH)
 		{
-			if (mlx->redraw || (!mlx->image[xy[0] * 4 + xy[1] * mlx->size_line] &&
-			!mlx->image[xy[0] * 4 + xy[1] * mlx->size_line + 1] &&
-			!mlx->image[xy[0] * 4 + xy[1] * mlx->size_line + 2]))
-			{
-				color = mlx->fractal(xy[0], xy[1], mlx);
-				draw_pixel(xy[0], xy[1], color, mlx);
-			}
+			color = mlx->fractal(xy[0], xy[1], mlx);
+			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
 		xy[1]++;
@@ -836,3 +831,6 @@ int		main(int argc, char **argv)
 
 //how many threads is optimal? probably 8
 //change mandelbrot algorithm to more efficient one
+//remove redraw
+//burning ship crashes when zoom reaches around 158
+//should have different condition to stop zoom
