@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/26 18:19:31 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/27 14:28:58 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <math.h>
 # include <pthread.h>
 
-# define WIN_HEIGHT	1000
-# define WIN_WIDTH	1500
+# define WIN_HEIGHT	500
+# define WIN_WIDTH	1000
 # define THREADS 16
 
 typedef	struct		s_mlx
@@ -42,12 +42,13 @@ typedef	struct		s_mlx
 	int				redraw;
 	int				iter;
 	int				thread;
-	int				offsetx;
-	int				offsety;
+	long double		offsetx;
+	long double		offsety;
 	long double		re1;
 	long double		re2;
 	long double		lm1;
 	long double		lm2;
+	int				zoom;
 
 }					t_mlx;
 

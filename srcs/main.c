@@ -6,11 +6,24 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/26 19:00:03 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/27 14:29:59 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fractol.h"
+
+void	handle_reset(t_mlx *mlx)
+{
+	mlx->iter = 20;
+	mlx->offsetx = 0;
+	mlx->offsety = 0;
+	mlx->re1 = -2.5;
+	mlx->re2 = 1;
+	mlx->lm1 = -1;
+	mlx->lm2 = 1;
+	mlx->redraw = 1;
+	mlx->zoom = 0;
+}
 
 int		check_key(int key, void *param)
 {
@@ -22,7 +35,12 @@ int		check_key(int key, void *param)
 	if (key == 126)
 		mlx->iter += 1;
 	if (key == 125)
+	{
 		mlx->iter -= 1;
+		mlx->redraw = 1;
+	}
+	if (key == 82)
+		handle_reset(mlx);
 	handle_drawing(mlx);
 	return (0);
 }
@@ -38,8 +56,8 @@ int		mouse_press(int key, int x, int y, void *param)
 	}
 	if (key == 2)
 	{
-		mlx->offsetx += x - 750;
-		mlx->offsety += y - 500;
+		mlx->offsetx += x - WIN_WIDTH / 50 - WIN_WIDTH / 2;
+		mlx->offsety += y - WIN_HEIGHT / 2;
 		mlx->mouse2 = 1;
 		mlx->redraw = 1;
 		mlx->re1 /= 1.1;
@@ -48,34 +66,37 @@ int		mouse_press(int key, int x, int y, void *param)
 		mlx->lm2 /= 1.1;
 		mlx->offsetx *= 1.1;
 		mlx->offsety *= 1.1;
+
 	}
 	if (key == 4)
 	{
+		mlx->zoom++;
 		mlx->redraw = 1;
-		// if (x != mlx->mousex)
-		// 	mlx->offsetx += x - 750;
-		// if (y != mlx->mousey)
-		// 	mlx->offsety += y - 500;
+		mlx->offsetx -= (x + 50 - WIN_WIDTH * 0.75) / 10;
+		mlx->offsety -= (y - WIN_HEIGHT * 0.5) / 10;
 		mlx->re1 *= 1.1;
 		mlx->re2 *= 1.1;
 		mlx->lm1 *= 1.1;
 		mlx->lm2 *= 1.1;
 		mlx->offsetx /= 1.1;
 		mlx->offsety /= 1.1;
+		if (!(mlx->zoom % 3))
+			mlx->iter -= 1;
 	}
 	if (key == 5)
 	{
+		mlx->zoom++;
 		mlx->redraw = 1;
-		// if (x != mlx->mousex)
-		// 	mlx->offsetx += x - 750;
-		// if (y != mlx->mousey)
-		// 	mlx->offsety += y - 500;
+		mlx->offsetx += (x + 50 - WIN_WIDTH * 0.75) / 10;
+		mlx->offsety += (y - WIN_HEIGHT * 0.5) / 10;
 		mlx->re1 /= 1.1;
 		mlx->re2 /= 1.1;
 		mlx->lm1 /= 1.1;
 		mlx->lm2 /= 1.1;
 		mlx->offsetx *= 1.1;
 		mlx->offsety *= 1.1;
+		if (!(mlx->zoom % 3))
+			mlx->iter += 1;
 
 	}
 	mlx->mousex = x;
@@ -96,7 +117,7 @@ int		mouse_release(int key, int x, int y, void *param)
 		mlx->mouse1 = 0;
 	if (key == 2)
 		mlx->mouse2 = 0;
-	ft_printf("offsetx: %d\n", mlx->offsetx);
+	//ft_printf("offsetx: %d\n", mlx->offsetx);
 	mlx->redraw = 1;
 	handle_drawing(mlx);
 	return (0);
@@ -186,6 +207,7 @@ int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
 {
 	long double xy_scaled[2];
 	long double *xy;
+	long double *xy2;
 	int *i;
 	long double xtmp;
 
@@ -195,12 +217,31 @@ int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
 	xy = (long double[2]){0., 0.};
+	xy2 = (long double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
-	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
+	// while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
+	// {
+	// 	xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
+	// 	xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
+	// 	xy[0] = xtmp;
+	// 	i[0]++;
+	// }
+	// while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
+	// {
+	// 	xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
+	// 	xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
+	// 	xy2[0] = xy[0] * xy[0];
+	// 	xy2[1] = xy[1] * xy[1];
+	// 	i[0]++;
+	// }
+	xtmp = 0;
+	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
 	{
-		xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
-		xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
-		xy[0] = xtmp;
+		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
+		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
+		xy2[0] = xy[0] * xy[0];
+		xy2[1] = xy[1] * xy[1];
+		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
 		i[0]++;
 	}
 	if (i[0] == mlx->iter)
@@ -234,7 +275,7 @@ void	*draw_fractal(void *param)
 		}
 		xy[1]++;
 	}
-	draw_pixel(750, 500, 0xFF0000, mlx);
+	draw_pixel(WIN_WIDTH / 2, WIN_HEIGHT / 2, 0xFF0000, mlx); //temp midpixel
 	return (NULL);
 }
 
@@ -647,13 +688,14 @@ void	initialize_mlx(t_mlx *mlx, char *name)
 	mlx->mouse1 = 0;
 	mlx->mouse2 = 0;
 	mlx->redraw = 1;
-	mlx->iter = 10;
+	mlx->iter = 20;
 	mlx->offsetx = 0;
 	mlx->offsety = 0;
 	mlx->re1 = -2.5;
 	mlx->re2 = 1;
 	mlx->lm1 = -1;
 	mlx->lm2 = 1;
+	mlx->zoom = 0;
 }
 
 void	handle_graphics(t_mlx *mlx)
@@ -674,6 +716,7 @@ int		main(int argc, char **argv)
 
 	if (!(mlx = (t_mlx*)malloc(sizeof(t_mlx))))
 		handle_error(3);
+
 	initialize_mlx(mlx, argv[1]);
 	if (argc != 2)
 		handle_error(1);
