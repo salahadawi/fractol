@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/27 14:28:58 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/27 17:28:57 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 # include <math.h>
 # include <pthread.h>
 
-# define WIN_HEIGHT	500
+# define WIN_HEIGHT	667
 # define WIN_WIDTH	1000
-# define THREADS 16
+# define THREADS 8
 
 typedef	struct		s_mlx
 {
@@ -48,7 +48,10 @@ typedef	struct		s_mlx
 	long double		re2;
 	long double		lm1;
 	long double		lm2;
-	int				zoom;
+	double			zoom;
+	int				(*fractal)(int, int, struct s_mlx*);
+	int				color;
+	int				idlezoom;
 
 }					t_mlx;
 

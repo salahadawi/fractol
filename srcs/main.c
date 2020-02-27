@@ -6,23 +6,51 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/27 14:29:59 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/27 17:43:24 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fractol.h"
+
+int		handle_idle(t_mlx *mlx)
+{
+	if (mlx->mouse2)
+	{
+		if (mlx->zoom < 160)
+		{
+			mlx->zoom += 0.2;
+		mlx->idlezoom++;
+		mlx->offsetx += (mlx->mousex - WIN_WIDTH / 5 - WIN_WIDTH / 2) / 50;
+		mlx->offsety += (mlx->mousey - WIN_HEIGHT / 2) / 50;
+		mlx->mouse2 = 1;
+		mlx->redraw = 1;
+		mlx->re1 /= 1.02;
+		mlx->re2 /= 1.02;
+		mlx->lm1 /= 1.02;
+		mlx->lm2 /= 1.02;
+		mlx->offsetx *= 1.02;
+		mlx->offsety *= 1.02;
+		if (!(mlx->idlezoom % 15) && mlx->zoom < 160)
+			mlx->iter += 1;
+		handle_drawing(mlx);
+		}
+		ft_printf("%f\n", mlx->zoom);
+	}
+	return (0);
+}
 
 void	handle_reset(t_mlx *mlx)
 {
 	mlx->iter = 20;
 	mlx->offsetx = 0;
 	mlx->offsety = 0;
-	mlx->re1 = -2.5;
+	mlx->re1 = -2;
 	mlx->re2 = 1;
 	mlx->lm1 = -1;
 	mlx->lm2 = 1;
 	mlx->redraw = 1;
 	mlx->zoom = 0;
+	mlx->idlezoom = 0;
 }
 
 int		check_key(int key, void *param)
@@ -56,21 +84,26 @@ int		mouse_press(int key, int x, int y, void *param)
 	}
 	if (key == 2)
 	{
-		mlx->offsetx += x - WIN_WIDTH / 50 - WIN_WIDTH / 2;
-		mlx->offsety += y - WIN_HEIGHT / 2;
+		// mlx->offsetx += x - WIN_WIDTH / 50 - WIN_WIDTH / 2;
+		// mlx->offsety += y - WIN_HEIGHT / 2;
+		if (mlx->zoom < 160)
+		{
+			mlx->zoom += 0.1;
+		// mlx->offsetx += x - WIN_WIDTH / 50 - WIN_WIDTH / 2;
+		// mlx->offsety += y - WIN_HEIGHT / 2;
 		mlx->mouse2 = 1;
 		mlx->redraw = 1;
-		mlx->re1 /= 1.1;
-		mlx->re2 /= 1.1;
-		mlx->lm1 /= 1.1;
-		mlx->lm2 /= 1.1;
-		mlx->offsetx *= 1.1;
-		mlx->offsety *= 1.1;
-
+		mlx->re1 /= 1.01;
+		mlx->re2 /= 1.01;
+		mlx->lm1 /= 1.01;
+		mlx->lm2 /= 1.01;
+		mlx->offsetx *= 1.01;
+		mlx->offsety *= 1.01;
+		}
 	}
 	if (key == 4)
 	{
-		mlx->zoom++;
+		mlx->zoom--;
 		mlx->redraw = 1;
 		mlx->offsetx -= (x + 50 - WIN_WIDTH * 0.75) / 10;
 		mlx->offsety -= (y - WIN_HEIGHT * 0.5) / 10;
@@ -80,12 +113,14 @@ int		mouse_press(int key, int x, int y, void *param)
 		mlx->lm2 *= 1.1;
 		mlx->offsetx /= 1.1;
 		mlx->offsety /= 1.1;
-		if (!(mlx->zoom % 3))
+		if (!((int)mlx->zoom % 3))
 			mlx->iter -= 1;
 	}
 	if (key == 5)
 	{
-		mlx->zoom++;
+		if (mlx->zoom < 160)
+		{
+			mlx->zoom++;
 		mlx->redraw = 1;
 		mlx->offsetx += (x + 50 - WIN_WIDTH * 0.75) / 10;
 		mlx->offsety += (y - WIN_HEIGHT * 0.5) / 10;
@@ -95,9 +130,9 @@ int		mouse_press(int key, int x, int y, void *param)
 		mlx->lm2 /= 1.1;
 		mlx->offsetx *= 1.1;
 		mlx->offsety *= 1.1;
-		if (!(mlx->zoom % 3))
+		if (!((int)mlx->zoom % 3))
 			mlx->iter += 1;
-
+		}
 	}
 	mlx->mousex = x;
 	mlx->mousey = y;
@@ -173,37 +208,76 @@ long double	scale(int n, long double oldmin, long double oldmax, long double new
 	return (result);
 }
 
+int	burning_ship(int x, int y, t_mlx *mlx)
+{
+	long double xy_scaled[2];
+	long double *xy;
+	int *i;
+	long double xtmp;
+
+	x += mlx->offsetx;
+	y += mlx->offsety;
+	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
+	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
+	xy = (long double[2]){0., 0.};
+	i = (int[2]){0, mlx->iter};
+	while (xy[0] * xy[0] + xy[1] * xy[1] <= 2 * 2 && i[0] < i[1])
+	{
+		if (xy[0] < 0)
+			xy[0] *= -1;
+		if (xy[1] < 0)
+			xy[1] *= -1;
+		xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
+		xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
+		xy[0] = xtmp;
+		i[0]++;
+	}
+	if (i[0] == mlx->iter)
+		return (0);
+	else if (i[0] < mlx->iter * 0.3)
+		return (0xff8e00);
+	else if (i[0] < mlx->iter * 0.7)
+		return (0xff9999);
+	else
+		return (0xcc6699);
+}
+
 // int	burning_ship(int x, int y, t_mlx *mlx)
 // {
 // 	long double xy_scaled[2];
 // 	long double *xy;
+// 	long double *xy2;
 // 	int *i;
 // 	long double xtmp;
 
-// 	x -= WIN_WIDTH / 3 * 2;
-// 	y -= WIN_HEIGHT / 2;
-// 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, -2 * mlx->zoom, 1 * mlx->zoom);
-// 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, -1 * mlx->zoom, 1 * mlx->zoom);
+// 	x += mlx->offsetx;
+// 	y += mlx->offsety;
+// 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
+// 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
 // 	xy = (long double[2]){0., 0.};
+// 	xy2 = (long double[2]){0., 0.};
 // 	i = (int[2]){0, mlx->iter};
-// 	while (xy[0] * xy[0] + xy[1] * xy[1] <= 2 * 2 && i[0] < i[1])
+// 	xtmp = 0;
+// 	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
 // 	{
 // 		if (xy[0] < 0)
 // 			xy[0] *= -1;
 // 		if (xy[1] < 0)
 // 			xy[1] *= -1;
-// 		xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
-// 		xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
-// 		xy[0] = xtmp;
+// 		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
+// 		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
+// 		xy2[0] = xy[0] * xy[0];
+// 		xy2[1] = xy[1] * xy[1];
+// 		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
 // 		i[0]++;
 // 	}
 // 	if (i[0] == mlx->iter)
 // 		return (0);
 // 	else
-// 		return (0x00F0F * i[0]);
+// 		return (0x02090F * i[0]);
 // }
 
-int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
+int	julia(int x, int y, t_mlx *mlx)
 {
 	long double xy_scaled[2];
 	long double *xy;
@@ -211,7 +285,6 @@ int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
 	int *i;
 	long double xtmp;
 
-	(void)slope;
 	x += mlx->offsetx;
 	y += mlx->offsety;
 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
@@ -219,21 +292,6 @@ int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
 	xy = (long double[2]){0., 0.};
 	xy2 = (long double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
-	// while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
-	// {
-	// 	xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
-	// 	xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
-	// 	xy[0] = xtmp;
-	// 	i[0]++;
-	// }
-	// while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
-	// {
-	// 	xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
-	// 	xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
-	// 	xy2[0] = xy[0] * xy[0];
-	// 	xy2[1] = xy[1] * xy[1];
-	// 	i[0]++;
-	// }
 	xtmp = 0;
 	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
 	{
@@ -250,12 +308,50 @@ int	mandelbrot(int x, int y, t_mlx *mlx, long double slope[2])
 		return (0x02090F * i[0]);
 }
 
+int	mandelbrot(int x, int y, t_mlx *mlx)
+{
+	long double xy_scaled[2];
+	long double *xy;
+	long double *xy2;
+	int *i;
+	long double xtmp;
+
+	x += mlx->offsetx;
+	y += mlx->offsety;
+	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
+	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
+	xy = (long double[2]){0., 0.};
+	xy2 = (long double[2]){0., 0.};
+	i = (int[2]){0, mlx->iter};
+	xtmp = 0;
+	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
+	{
+		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
+		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
+		xy2[0] = xy[0] * xy[0];
+		xy2[1] = xy[1] * xy[1];
+		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
+		i[0]++;
+	}
+	// if (i[0] == mlx->iter)
+	// 	return (0xcc6699 * i[0]);
+	// else if (i[0] < mlx->iter * 0.3)
+	// 	return (0);
+	// else if (i[0] < mlx->iter * 0.7)
+	// 	return (0xff9999 * i[0]);
+	// else
+	// 	return (0xFFFFFF *  i[0]);
+	if (i[0] == mlx->iter)
+		return (0);
+	else
+		return (0x02090F * i[0]);
+}
+
 void	*draw_fractal(void *param)
 {
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
 
 	mlx = param;
 	xy[1] = 0;
@@ -268,7 +364,7 @@ void	*draw_fractal(void *param)
 			!mlx->image[xy[0] * 4 + xy[1] * mlx->size_line + 1] &&
 			!mlx->image[xy[0] * 4 + xy[1] * mlx->size_line + 2]))
 			{
-				color = mandelbrot(xy[0], xy[1], mlx, slope);
+				color = mlx->fractal(xy[0], xy[1], mlx);
 				draw_pixel(xy[0], xy[1], color, mlx);
 			}
 			xy[0] += THREADS;
@@ -284,7 +380,6 @@ void	*draw_fractal1(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
 
 	mlx = param;
 	xy[1] = 0;
@@ -293,7 +388,7 @@ void	*draw_fractal1(void *param)
 		xy[0] = 1;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -307,7 +402,7 @@ void	*draw_fractal2(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -316,7 +411,7 @@ void	*draw_fractal2(void *param)
 		xy[0] = 2;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -330,7 +425,7 @@ void	*draw_fractal3(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -339,7 +434,7 @@ void	*draw_fractal3(void *param)
 		xy[0] = 3;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -353,7 +448,7 @@ void	*draw_fractal4(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -362,7 +457,7 @@ void	*draw_fractal4(void *param)
 		xy[0] = 4;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -376,7 +471,7 @@ void	*draw_fractal5(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -385,7 +480,7 @@ void	*draw_fractal5(void *param)
 		xy[0] = 5;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -399,7 +494,7 @@ void	*draw_fractal6(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -408,7 +503,7 @@ void	*draw_fractal6(void *param)
 		xy[0] = 6;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -422,7 +517,7 @@ void	*draw_fractal7(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -431,7 +526,7 @@ void	*draw_fractal7(void *param)
 		xy[0] = 7;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -445,7 +540,7 @@ void	*draw_fractal8(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -454,7 +549,7 @@ void	*draw_fractal8(void *param)
 		xy[0] = 8;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -468,7 +563,7 @@ void	*draw_fractal9(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -477,7 +572,7 @@ void	*draw_fractal9(void *param)
 		xy[0] = 9;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -491,7 +586,7 @@ void	*draw_fractal10(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -500,7 +595,7 @@ void	*draw_fractal10(void *param)
 		xy[0] = 10;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -514,7 +609,7 @@ void	*draw_fractal11(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -523,7 +618,7 @@ void	*draw_fractal11(void *param)
 		xy[0] = 11;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -537,7 +632,7 @@ void	*draw_fractal12(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -546,7 +641,7 @@ void	*draw_fractal12(void *param)
 		xy[0] = 12;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -560,7 +655,7 @@ void	*draw_fractal13(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -569,7 +664,7 @@ void	*draw_fractal13(void *param)
 		xy[0] = 13;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -583,7 +678,7 @@ void	*draw_fractal14(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -592,7 +687,7 @@ void	*draw_fractal14(void *param)
 		xy[0] = 14;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -606,7 +701,7 @@ void	*draw_fractal15(void *param)
 	t_mlx *mlx;
 	int color;
 	int xy[2];
-	long double slope[2];
+
 
 	mlx = param;
 	xy[1] = 0;
@@ -615,7 +710,7 @@ void	*draw_fractal15(void *param)
 		xy[0] = 15;
 		while (xy[0] < WIN_WIDTH)
 		{
-			color = mandelbrot(xy[0], xy[1], mlx, slope);
+			color = mlx->fractal(xy[0], xy[1], mlx);
 			draw_pixel(xy[0], xy[1], color, mlx);
 			xy[0] += THREADS;
 		}
@@ -691,11 +786,12 @@ void	initialize_mlx(t_mlx *mlx, char *name)
 	mlx->iter = 20;
 	mlx->offsetx = 0;
 	mlx->offsety = 0;
-	mlx->re1 = -2.5;
+	mlx->re1 = -2;
 	mlx->re2 = 1;
 	mlx->lm1 = -1;
 	mlx->lm2 = 1;
 	mlx->zoom = 0;
+	mlx->idlezoom = 0;
 }
 
 void	handle_graphics(t_mlx *mlx)
@@ -705,9 +801,22 @@ void	handle_graphics(t_mlx *mlx)
 	mlx_hook(mlx->window, 5, 0, mouse_release, (void*)mlx);
 	mlx_hook(mlx->window, 6, 0, mouse_move, (void*)mlx);
 	//mlx_hook(mlx->window, 12, 0, handle_idle, (void*)mlx);
-	//mlx_loop_hook(mlx->init, handle_idle, (void*)mlx);
+	mlx_loop_hook(mlx->init, handle_idle, (void*)mlx);
 	handle_drawing(mlx);
 	mlx_loop(mlx->init);
+}
+
+int		handle_fractal(t_mlx *mlx, char *name)
+{
+	if (ft_strequ(name, "mandelbrot"))
+		mlx->fractal = &mandelbrot;
+	else if (ft_strequ(name, "burning_ship"))
+		mlx->fractal = &burning_ship;
+	else if (ft_strequ(name, "julia"))
+		mlx->fractal = &julia;
+	else
+		return (1);
+	return (0);
 }
 
 int		main(int argc, char **argv)
@@ -715,8 +824,9 @@ int		main(int argc, char **argv)
 	t_mlx	*mlx;
 
 	if (!(mlx = (t_mlx*)malloc(sizeof(t_mlx))))
-		handle_error(3);
-
+		handle_error(2);
+	if (handle_fractal(mlx, argv[1]))
+		handle_error(1);
 	initialize_mlx(mlx, argv[1]);
 	if (argc != 2)
 		handle_error(1);
@@ -724,7 +834,5 @@ int		main(int argc, char **argv)
 	return (0);
 }
 
-//multithreading might work by not letting threads exit
-//zoom always zooms in fractal center
 //how many threads is optimal? probably 8
 //change mandelbrot algorithm to more efficient one
