@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/28 14:18:45 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/28 14:32:50 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ typedef	struct		s_mlx
 	int				mouse2;
 	int				mousex;
 	int				mousey;
-	int				redraw;
 	int				iter;
 	int				thread;
 	long double		offsetx;
@@ -50,7 +49,7 @@ typedef	struct		s_mlx
 	long double		lm2;
 	double			zoom;
 	int				(*fractal)(int, int, struct s_mlx*);
-	int				color;
+	int				palette;
 	int				idlezoom;
 	int				drawgui;
 	double			multi;
