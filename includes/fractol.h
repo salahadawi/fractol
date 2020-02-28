@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/27 17:28:57 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/28 14:18:45 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ typedef	struct		s_mlx
 	int				(*fractal)(int, int, struct s_mlx*);
 	int				color;
 	int				idlezoom;
+	int				drawgui;
+	double			multi;
 
 }					t_mlx;
 

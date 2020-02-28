@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/27 18:40:12 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/28 14:18:57 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		handle_idle(t_mlx *mlx)
 			mlx->iter += 1;
 		handle_drawing(mlx);
 		}
-		ft_printf("%f\n", mlx->zoom);
+		//ft_printf("%.15Lf, %.15Lf, %.15Lf, %.15Lf\n", mlx->re1, mlx->re2, mlx->lm1, mlx->lm2);
 	}
 	return (0);
 }
@@ -51,6 +51,33 @@ void	handle_reset(t_mlx *mlx)
 	mlx->redraw = 1;
 	mlx->zoom = 0;
 	mlx->idlezoom = 0;
+	mlx->multi = 1;
+}
+
+void	handle_multi(t_mlx *mlx, int key)
+{
+	if (key == 92)
+	{
+		if (mlx->multi < 3)
+			mlx->multi += 0.05;
+		else if (mlx->multi < 4)
+			mlx->multi += 0.1;
+		else if (mlx->multi < 5)
+			mlx->multi += 0.2;
+		else
+			mlx->multi += 0.4;
+	}
+	else if (key == 89)
+	{
+		if (mlx->multi < 3)
+			mlx->multi -= 0.05;
+		else if (mlx->multi < 4)
+			mlx->multi -= 0.1;
+		else if (mlx->multi < 5)
+			mlx->multi -= 0.2;
+		else
+			mlx->multi -= 0.4;
+	}
 }
 
 int		check_key(int key, void *param)
@@ -67,6 +94,8 @@ int		check_key(int key, void *param)
 		mlx->iter -= 1;
 		mlx->redraw = 1;
 	}
+	if (key == 92 || key == 89)
+		handle_multi(mlx, key);
 	if (key == 82)
 		handle_reset(mlx);
 	handle_drawing(mlx);
@@ -118,7 +147,7 @@ int		mouse_press(int key, int x, int y, void *param)
 	}
 	if (key == 5)
 	{
-		if (mlx->zoom < 160)
+		if (mlx->zoom < 1600)
 		{
 			mlx->zoom++;
 		mlx->redraw = 1;
@@ -133,6 +162,7 @@ int		mouse_press(int key, int x, int y, void *param)
 		if (!((int)mlx->zoom % 3))
 			mlx->iter += 1;
 		}
+		ft_printf("%f\n", mlx->zoom);
 	}
 	mlx->mousex = x;
 	mlx->mousey = y;
@@ -242,46 +272,10 @@ int	burning_ship(int x, int y, t_mlx *mlx)
 		return (0xcc6699);
 }
 
-// int	burning_ship(int x, int y, t_mlx *mlx)
-// {
-// 	long double xy_scaled[2];
-// 	long double *xy;
-// 	long double *xy2;
-// 	int *i;
-// 	long double xtmp;
-
-// 	x += mlx->offsetx;
-// 	y += mlx->offsety;
-// 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
-// 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
-// 	xy = (long double[2]){0., 0.};
-// 	xy2 = (long double[2]){0., 0.};
-// 	i = (int[2]){0, mlx->iter};
-// 	xtmp = 0;
-// 	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
-// 	{
-// 		if (xy[0] < 0)
-// 			xy[0] *= -1;
-// 		if (xy[1] < 0)
-// 			xy[1] *= -1;
-// 		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
-// 		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
-// 		xy2[0] = xy[0] * xy[0];
-// 		xy2[1] = xy[1] * xy[1];
-// 		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
-// 		i[0]++;
-// 	}
-// 	if (i[0] == mlx->iter)
-// 		return (0);
-// 	else
-// 		return (0x02090F * i[0]);
-// }
-
-int	julia(int x, int y, t_mlx *mlx)
+int	multibrot(int x, int y, t_mlx *mlx)
 {
 	long double xy_scaled[2];
 	long double *xy;
-	long double *xy2;
 	int *i;
 	long double xtmp;
 
@@ -290,18 +284,50 @@ int	julia(int x, int y, t_mlx *mlx)
 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
 	xy = (long double[2]){0., 0.};
-	xy2 = (long double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
 	xtmp = 0;
-	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
+	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
 	{
-		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
-		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
-		xy2[0] = xy[0] * xy[0];
-		xy2[1] = xy[1] * xy[1];
-		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
+		xtmp = pow((xy[0] * xy[0] + xy[1] * xy[1]), (mlx->multi/2.)) * cos(mlx->multi * atan2(xy[1], xy[0])) + xy_scaled[0];
+		xy[1] = pow((xy[0] * xy[0] + xy[1] * xy[1]), (mlx->multi/2.)) * sin(mlx->multi * atan2(xy[1], xy[0])) + xy_scaled[1];
+		xy[0] = xtmp;
 		i[0]++;
 	}
+	if (i[0] == mlx->iter)
+		return (0);
+	else
+		return (0x0F090F * i[0]);
+}
+
+int	tricorn(int x, int y, t_mlx *mlx)
+{
+	long double xy_scaled[2];
+	long double *xy;
+	int *i;
+	long double xtmp;
+
+	x += mlx->offsetx;
+	y += mlx->offsety;
+	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
+	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
+	xy = (long double[2]){xy_scaled[0], xy_scaled[1]};
+	i = (int[2]){0, mlx->iter};
+	xtmp = 0;
+	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
+	{
+		xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
+		xy[1] = -2 * xy[0] * xy[1] + xy_scaled[1];
+		xy[0] = xtmp;
+		i[0]++;
+	}
+	// if (i[0] == mlx->iter)
+	// 	return (0xcc6699 * i[0]);
+	// else if (i[0] < mlx->iter * 0.3)
+	// 	return (0);
+	// else if (i[0] < mlx->iter * 0.7)
+	// 	return (0xff9999 * i[0]);
+	// else
+	// 	return (0xFFFFFF *  i[0]);
 	if (i[0] == mlx->iter)
 		return (0);
 	else
@@ -312,7 +338,6 @@ int	mandelbrot(int x, int y, t_mlx *mlx)
 {
 	long double xy_scaled[2];
 	long double *xy;
-	long double *xy2;
 	int *i;
 	long double xtmp;
 
@@ -321,16 +346,13 @@ int	mandelbrot(int x, int y, t_mlx *mlx)
 	xy_scaled[0] = scale(x, 0, WIN_WIDTH, mlx->re1, mlx->re2);
 	xy_scaled[1] = scale(y, 0, WIN_HEIGHT, mlx->lm1, mlx->lm2);
 	xy = (long double[2]){0., 0.};
-	xy2 = (long double[2]){0., 0.};
 	i = (int[2]){0, mlx->iter};
 	xtmp = 0;
-	while (xy2[0] + xy2[1] <= 4 && i[0] < i[1])
+	while (xy[0] * xy[0] + xy[1] * xy[1] <= 4 && i[0] < i[1])
 	{
-		xy[0] = xy2[0] - xy2[1] + xy_scaled[0];
-		xy[1] = xtmp - xy2[0] - xy2[1] + xy_scaled[1];
-		xy2[0] = xy[0] * xy[0];
-		xy2[1] = xy[1] * xy[1];
-		xtmp = (xy[0] + xy[1]) * (xy[0] + xy[1]);
+		xtmp = xy[0] * xy[0] - xy[1] * xy[1] + xy_scaled[0];
+		xy[1] = 2 * xy[0] * xy[1] + xy_scaled[1];
+		xy[0] = xtmp;
 		i[0]++;
 	}
 	// if (i[0] == mlx->iter)
@@ -366,7 +388,7 @@ void	*draw_fractal(void *param)
 		}
 		xy[1]++;
 	}
-	draw_pixel(WIN_WIDTH / 2, WIN_HEIGHT / 2, 0xFF0000, mlx); //temp midpixel
+	//draw_pixel(WIN_WIDTH / 2, WIN_HEIGHT / 2, 0xFF0000, mlx); //temp midpixel
 	return (NULL);
 }
 
@@ -787,6 +809,7 @@ void	initialize_mlx(t_mlx *mlx, char *name)
 	mlx->lm2 = 1;
 	mlx->zoom = 0;
 	mlx->idlezoom = 0;
+	mlx->multi = 1;
 }
 
 void	handle_graphics(t_mlx *mlx)
@@ -807,8 +830,10 @@ int		handle_fractal(t_mlx *mlx, char *name)
 		mlx->fractal = &mandelbrot;
 	else if (ft_strequ(name, "burning_ship"))
 		mlx->fractal = &burning_ship;
-	else if (ft_strequ(name, "julia"))
-		mlx->fractal = &julia;
+	else if (ft_strequ(name, "multibrot"))
+		mlx->fractal = &multibrot;
+	else if (ft_strequ(name, "tricorn"))
+		mlx->fractal = &tricorn;
 	else
 		return (1);
 	return (0);
