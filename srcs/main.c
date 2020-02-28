@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/02/28 17:06:10 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/02/28 17:22:59 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,7 @@ int		palette(int i, t_mlx *mlx)
 			return (0xff3300 * i);
 	}
 	if (mlx->palette == 4)
-		return (rgb(20 * i, 10 * i, 0));
+		return (rgb(20 * i, 0, 0));
 	return (1);
 }
 
@@ -930,3 +930,4 @@ int		main(int argc, char **argv)
 //remove redraw
 //burning ship crashes when zoom reaches around 158
 //should have different condition to stop zoom
+//color scheme that goes to 255 in one color, then back to 0 and 255 in another color
