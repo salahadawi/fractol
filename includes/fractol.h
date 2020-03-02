@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/02 14:25:08 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/02 18:12:38 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef	struct		s_mlx
 	int				mousex;
 	int				mousey;
 	int				iter;
-	int				thread;
 	long double		offsetx;
 	long double		offsety;
 	long double		re1;
