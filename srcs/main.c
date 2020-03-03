@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/02 20:00:33 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 13:03:19 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	handle_reset(t_mlx *mlx)
 {
 	mlx->iter = 20;
 	if (mlx->fractal == &julia)
-		mlx->iter = 60;
+		mlx->iter = 50;
 	mlx->offsetx = 0;
 	mlx->offsety = 0;
 	mlx->re1 = -2;
@@ -699,6 +699,15 @@ void	handle_gui(t_mlx *mlx)
 	str = ft_itoa(mlx->iter);
 	mlxstr(mlx, 140, 55, str);
 	free(str);
+	mlxstr(mlx, 20, 80, "Mouse1 - Drag to move");
+	mlxstr(mlx, 20, 105, "Mouse2 - Hold to zoom");
+	mlxstr(mlx, 20, 130, "Mouse wheel - Zoom in/out");
+	mlxstr(mlx, 20, 155, "0 - Reset view");
+	mlxstr(mlx, 20, 180, "4 / 6 - Change color");
+	if (mlx->fractal == &multibrot)
+		mlxstr(mlx, 20, 205, "7 / 9 - Change exponent");
+	mlxstr(mlx, WIN_WIDTH - 240, 10, "Press 5 to toggle GUI");
+
 }
 
 void	create_threads(t_mlx *mlx)
@@ -748,7 +757,7 @@ void	initialize_mlx(t_mlx *mlx, char *name)
 	mlx->mouse2 = 0;
 	mlx->iter = 20;
 	if (mlx->fractal == &julia)
-		mlx->iter = 60;
+		mlx->iter = 50;
 	mlx->offsetx = 0;
 	mlx->offsety = 0;
 	mlx->re1 = -2;
