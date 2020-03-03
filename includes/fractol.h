@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/03 15:51:52 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 16:13:01 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ int					burning_ship(int x, int y, t_mlx *mlx);
 int					multibrot(int x, int y, t_mlx *mlx);
 int					tricorn(int x, int y, t_mlx *mlx);
 int					mandelbrot(int x, int y, t_mlx *mlx);
-void				handle_julia_mouse(long double *x, long double *y, t_mlx *mlx);
+void				handle_julia_mouse(long double *x, long double *y,
+						t_mlx *mlx);
 int					julia(int x, int y, t_mlx *mlx);
 void				*draw_fractal(void *param);
 void				mlxstr(t_mlx *mlx, int x, int y, char *str);
