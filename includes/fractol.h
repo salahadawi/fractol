@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/03 13:13:02 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 13:14:08 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ typedef	struct		s_mlx
 	long double		xyold[2];
 
 }					t_mlx;
+
+typedef	struct		s_thread
+{
+	int				thread;
+	t_mlx			*mlx;
+
+}					t_thread;
 
 void	handle_error(int code);
 void	handle_drawing(t_mlx *mlx);

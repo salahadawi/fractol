@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/03 13:03:19 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 13:43:14 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -511,165 +511,11 @@ void	*draw_fractal(void *param)
 	int		color;
 	int		xy[2];
 
-	mlx = param;
+	mlx = ((t_thread*)param)->mlx;
 	xy[1] = 0;
 	while (xy[1] < WIN_HEIGHT)
 	{
-		xy[0] = 0;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal1(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 1;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal2(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 2;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal3(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 3;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal4(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 4;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal5(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 5;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal6(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 6;
-		while (xy[0] < WIN_WIDTH)
-		{
-			color = mlx->fractal(xy[0], xy[1], mlx);
-			draw_pixel(xy[0], xy[1], color, mlx);
-			xy[0] += THREADS;
-		}
-		xy[1]++;
-	}
-	return (NULL);
-}
-
-void	*draw_fractal7(void *param)
-{
-	t_mlx	*mlx;
-	int		color;
-	int		xy[2];
-
-	mlx = param;
-	xy[1] = 0;
-	while (xy[1] < WIN_HEIGHT)
-	{
-		xy[0] = 7;
+		xy[0] = ((t_thread*)param)->thread;
 		while (xy[0] < WIN_WIDTH)
 		{
 			color = mlx->fractal(xy[0], xy[1], mlx);
@@ -713,22 +559,16 @@ void	handle_gui(t_mlx *mlx)
 void	create_threads(t_mlx *mlx)
 {
 	pthread_t	thread_id[THREADS];
-	void		*(*draw[8])(void*);
+	t_thread	thread_arr[8];
 	int			i;
 	int			ret;
 
 	i = 0;
-	draw[0] = draw_fractal;
-	draw[1] = draw_fractal1;
-	draw[2] = draw_fractal2;
-	draw[3] = draw_fractal3;
-	draw[4] = draw_fractal4;
-	draw[5] = draw_fractal5;
-	draw[6] = draw_fractal6;
-	draw[7] = draw_fractal7;
 	while (i < THREADS)
 	{
-		ret = pthread_create(&thread_id[i], NULL, draw[i], mlx);
+		thread_arr[i].mlx = mlx;
+		thread_arr[i].thread = i;
+		ret = pthread_create(&thread_id[i], NULL, draw_fractal, &thread_arr[i]);
 		if (ret)
 			handle_error(3);
 		i++;
@@ -817,3 +657,5 @@ int		main(int argc, char **argv)
 	handle_graphics(mlx);
 	return (0);
 }
+
+//change starting zoom and offset for julia set
