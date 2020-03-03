@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/04 14:41:33 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/03 13:14:08 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 15:08:41 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,6 @@ typedef	struct		s_thread
 void	handle_error(int code);
 void	handle_drawing(t_mlx *mlx);
 int		julia(int x, int y, t_mlx *mlx);
+void	initialize_julia(t_mlx *mlx);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 15:50:35 by sadawi            #+#    #+#             */
-/*   Updated: 2020/03/03 13:43:14 by sadawi           ###   ########.fr       */
+/*   Updated: 2020/03/03 15:08:07 by sadawi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ void	handle_reset(t_mlx *mlx)
 	mlx->idlezoom = 0;
 	mlx->multi = 1;
 	mlx->lockmouse = 0;
+	if (mlx->fractal == &julia)
+		initialize_julia(mlx);
 }
 
 void	handle_multi(t_mlx *mlx, int key)
@@ -553,7 +555,6 @@ void	handle_gui(t_mlx *mlx)
 	if (mlx->fractal == &multibrot)
 		mlxstr(mlx, 20, 205, "7 / 9 - Change exponent");
 	mlxstr(mlx, WIN_WIDTH - 240, 10, "Press 5 to toggle GUI");
-
 }
 
 void	create_threads(t_mlx *mlx)
@@ -586,15 +587,23 @@ void	handle_drawing(t_mlx *mlx)
 		handle_gui(mlx);
 }
 
-void	initialize_mlx(t_mlx *mlx, char *name)
+void	initialize_julia(t_mlx *mlx)
 {
-	mlx->init = mlx_init();
-	mlx->window = mlx_new_window(mlx->init, WIN_WIDTH, WIN_HEIGHT, name);
-	mlx->image_ptr = mlx_new_image(mlx->init, WIN_WIDTH, WIN_HEIGHT);
-	mlx->image = mlx_get_data_addr(mlx->image_ptr, &(mlx->bpp),
-	&(mlx->size_line), &(mlx->endian));
-	mlx->mouse1 = 0;
-	mlx->mouse2 = 0;
+	mlx->zoom--;
+	mlx->offsetx -= (-1400 + 50 - WIN_WIDTH * 0.75) / 10;
+	mlx->offsety -= (200 - WIN_HEIGHT * 0.5) / 10;
+	mlx->re1 *= 1.3;
+	mlx->re2 *= 1.3;
+	mlx->lm1 *= 1.3;
+	mlx->lm2 *= 1.3;
+	mlx->offsetx /= 1.3;
+	mlx->offsety /= 1.3;
+	if (!((int)mlx->zoom % 3))
+		mlx->iter -= 1;
+}
+
+void	initialize_fractal(t_mlx *mlx)
+{
 	mlx->iter = 20;
 	if (mlx->fractal == &julia)
 		mlx->iter = 50;
@@ -613,6 +622,20 @@ void	initialize_mlx(t_mlx *mlx, char *name)
 	if (mlx->fractal == &mandelbrot)
 		mlx->maxzoom = 163;
 	mlx->lockmouse = 0;
+	if (mlx->fractal == &julia)
+		initialize_julia(mlx);
+}
+
+void	initialize_mlx(t_mlx *mlx, char *name)
+{
+	mlx->init = mlx_init();
+	mlx->window = mlx_new_window(mlx->init, WIN_WIDTH, WIN_HEIGHT, name);
+	mlx->image_ptr = mlx_new_image(mlx->init, WIN_WIDTH, WIN_HEIGHT);
+	mlx->image = mlx_get_data_addr(mlx->image_ptr, &(mlx->bpp),
+	&(mlx->size_line), &(mlx->endian));
+	mlx->mouse1 = 0;
+	mlx->mouse2 = 0;
+	initialize_fractal(mlx);
 }
 
 void	handle_graphics(t_mlx *mlx)
