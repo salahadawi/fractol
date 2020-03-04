@@ -1,6 +1,6 @@
 # fractol - Programming the psychedelic universe of fractals.
 
-In this project, we were tasked with drawing a 2D grapchical representation of several fractals, such as the Mandelbrot set.
+In this project, we were tasked with drawing a 2D graphical representation of several fractals, such as the Mandelbrot set.
 
 ![Mandelbrot-set](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-GUI.png)
 # Features
