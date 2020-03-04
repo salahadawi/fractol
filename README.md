@@ -5,17 +5,17 @@ In this project, we were tasked with drawing a 2D graphical representation of se
 ![Mandelbrot-set](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-GUI.png)
 # Features
 
-* Fast zoom with scroll wheel that follows the mouse position
+* Smooth zoom that follows the mouse position
 
-* Smooth zoom with right click that follows the mouse position
-
-* Movement with left click and drag
+* Image movement
 
 * Changing maximum iterations
 
 * Several colour schemes
 
 * Changing exponent in the Multibrot set
+
+* Changing Julia set input with mouse movement
 
 Relevant information, such as zoom level and instructions, can be toggled on-screen with the '5' key.
 
