@@ -6,7 +6,7 @@
 #    By: sadawi <sadawi@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/19 16:18:52 by sadawi            #+#    #+#              #
-#    Updated: 2020/03/03 16:07:21 by sadawi           ###   ########.fr        #
+#    Updated: 2020/03/05 13:02:15 by sadawi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ main.c  multithreading.c palettes.c scale.c
 SRCS=$(addprefix srcs/, $(CFILES))
 OBJS=$(addprefix objs/, $(notdir $(SRCS:.c=.o)))
 INCLUDES= -I includes -I libft
-FLAGS=-Wall -Wextra -Werror
+FLAGS=-Wall -Wextra -Werror -O3
 MLX=-I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL \
 -framework Appkit
 RUN_LIB=make -C libft/ fclean && make -C libft/
