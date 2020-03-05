@@ -37,4 +37,4 @@ multibrot
 ![Julia-green-theme](https://github.com/salahadawi/fractol/blob/master/images/Julia-green.png)
 ![Burning-ship-red-theme](https://github.com/salahadawi/fractol/blob/master/images/Burning-ship.png)
 ![Mandelbrot-set-white-theme](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-white.png)
-![Mandelbrot-set-scary-theme](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-scary.png)
+![Julia-set-colorful-theme](https://github.com/salahadawi/fractol/blob/master/images/Julia-colors.png)
