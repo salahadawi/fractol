@@ -1,50 +1,40 @@
 # fractol - Programming the psychedelic universe of fractals.
 
-In this project, we were tasked with drawing a 2D grapchical representation of several fractals, such as the Mandelbrot set.
+In this project, we were tasked with drawing a 2D graphical representation of several fractals, such as the Mandelbrot set.
 
-![42-3D-view](https://github.com/salahadawi/fdf/blob/master/images/42-3D.png)
+![Mandelbrot-set](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-GUI.png)
 # Features
 
-* Full 3D rotation
+* Smooth zoom that follows the mouse position
 
-* Camera movement
+* Image movement
 
-* Altitude controls
+* Changing maximum iterations
 
-* Colors according to altitude
+* Several colour schemes
 
-* Zoom in/out
+* Changing exponent in the Multibrot set
 
-* Idle animation
+* Changing Julia set input with mouse movement
 
-* Parallel/Isometric projection
+Relevant information, such as zoom level and instructions, can be toggled on-screen with the '5' key.
 
-Relevant information, such as rotation degrees and instructions, can be toggled on-screen with the 'H' key.
-
-# Input
-
-The given input map is a 2D grid of numbers, where each number corresponds to its altitude.
-
-For example, giving the following text as input:
+# How to use
 ```
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-0  0 10 10  0  0 10 10  0  0  0 10 10 10 10 10  0  0  0
-0  0 10 10  0  0 10 10  0  0  0  0  0  0  0 10 10  0  0
-0  0 10 10  0  0 10 10  0  0  0  0  0  0  0 10 10  0  0
-0  0 10 10 10 10 10 10  0  0  0  0 10 10 10 10  0  0  0
-0  0  0 10 10 10 10 10  0  0  0 10 10  0  0  0  0  0  0
-0  0  0  0  0  0 10 10  0  0  0 10 10  0  0  0  0  0  0
-0  0  0  0  0  0 10 10  0  0  0 10 10 10 10 10 10  0  0
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+Usage: ./fractol [name of fractal]
+
+Available fractals are:
+
+mandelbrot
+burning_ship
+julia
+tricorn
+multibrot
 ```
-
-Results in this visualization:
-
-![42-parallel-view](https://github.com/salahadawi/fdf/blob/master/images/42-2D.png)
 
 # Images
-![42-isometric-view](https://github.com/salahadawi/fdf/blob/master/images/42-ISO.png)
-![Pyra-3D-view](https://github.com/salahadawi/fdf/blob/master/images/Pyra-3D.png)
-![Earth-parallel-view](https://github.com/salahadawi/fdf/blob/master/images/Earth-3D.png)
+![Mandelbrot-set-candy-theme](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-candy.png)
+![Julia-green-theme](https://github.com/salahadawi/fractol/blob/master/images/Julia-green.png)
+![Burning-ship-red-theme](https://github.com/salahadawi/fractol/blob/master/images/Burning-ship.png)
+![Mandelbrot-set-white-theme](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-white.png)
+![Mandelbrot-set-scary-theme](https://github.com/salahadawi/fractol/blob/master/images/Mandelbrot-scary.png)
